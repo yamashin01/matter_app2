@@ -1,3 +1,82 @@
+# Name
+
+This project is for matter management of organization.
+
+# Features
+
+- customize format for organization
+- simple visualization
+
+# Requirement
+
+- yarn
+- tailwindcss
+- mantine
+- prettier
+- eslint
+- storybook
+- supabase
+
+# Installation
+
+1. clone matter-app
+
+```bash
+git init
+git clone https://github.com/yamashin01/matter_app2.git
+cd matter-app
+```
+
+2. install tailwindcss
+
+```bash
+npm install -D tailwindcss postcss autoprefixer
+```
+
+3. install eslint
+
+```bash
+npx eslint --init
+```
+
+4. install prettier
+
+```bash
+npm install --save-dev prettier eslint-config-prettier
+```
+
+5. install storybook
+
+```bash
+npx -p @storybook/cli sb init
+yarn add -D @storybook/addon-postcss@latest
+```
+
+6. install mantine
+
+```bash
+yarn add @mantine/hooks @mantine/form @mantine/core @mantine/next
+```
+
+7. install supabase
+
+```bash
+yarn add @supabase/ui
+```
+
+# setting
+
+- create .env.local file.<br>
+  The url and anon key can be got from the setting page of the project in supabase site.<br>
+  project page in supabase > setting > API > `URL` and `API Keys`
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://XXXXX.supabase.co
+NEXT_PUBLIC_SUPABSE_KEY=XXXXXXXXXX
+```
+
+---
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
