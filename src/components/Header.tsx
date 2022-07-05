@@ -2,6 +2,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import logo from "public/futuretech_icon.ico";
+import { Title } from "@mantine/core";
 
 export const Header = () => {
   return (
@@ -13,7 +14,7 @@ export const Header = () => {
       </Link>
       <Link href="/">
         <a className="text-4xl text-center flex justify-items-center">
-          <h1 className="pt-4">案件管理システム</h1>
+          <Title>案件管理システム</Title>
         </a>
       </Link>
     </header>

@@ -20,7 +20,6 @@ export const AuthLayout = (props: Props) => {
           <LayoutErrorBoundary>
             {user ? (
               <div>
-                <div>{props.children}</div>
                 <div className="flex justify-end mx-2 my-4">
                   <Button
                     size="medium"
@@ -30,6 +29,7 @@ export const AuthLayout = (props: Props) => {
                     Sign out
                   </Button>
                 </div>
+                <div>{props.children}</div>
               </div>
             ) : (
               <div className="flex justify-center pt-8">
