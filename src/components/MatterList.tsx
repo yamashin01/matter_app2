@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Badge, Card, Group, Text } from "@mantine/core";
+import { UpdateMatterModal } from "./UpdateMatterModal";
 
 export type Matter = {
   id: number; // 案件ID
@@ -24,10 +25,34 @@ type MatterListProps = {
   matterList: Matter[];
   uuid: string;
   getMatterList: VoidFunction;
-  setOpened: React.Dispatch<boolean>;
 };
 
 export const MatterList = (props: MatterListProps) => {
+  const [isOpened, setIsOpened] = useState<boolean>(false);
+  const [matter, setMatter] = useState<Matter>({
+    id: 0,
+    user_id: props.uuid,
+    title: "",
+    team: "",
+    classification: "",
+    trello_url: "",
+    customer: "",
+    billing_amount: 0,
+    started_date: new Date(),
+    billing_date: new Date(),
+    payment_due_date: new Date(),
+    comment: "",
+    created_time: new Date(),
+    checked_flag: false,
+    deleted_flag: false,
+    fixed_flag: false,
+  });
+
+  const handleUpdateMatterModal = (matter: Matter, opened: boolean) => {
+    setIsOpened(opened);
+    setMatter(matter);
+  };
+
   return (
     <div className="m-10">
       {props.matterList.map((matter) => {
@@ -36,13 +61,13 @@ export const MatterList = (props: MatterListProps) => {
             key={matter.id}
             shadow="sm"
             p="lg"
-            className="mb-5 border"
-            // onClick={() => setOpened(true)}
+            className="mb-5 border hover:cursor-pointer"
+            onClick={() => handleUpdateMatterModal(matter, true)}
           >
             <Card.Section className="flex justify-between">
               <p>{matter.title}</p>
               <Badge
-                color="pink"
+                color={matter.fixed_flag ? "blue" : "pink"}
                 variant="light"
                 className="my-2 mx-5 text-base"
               >
@@ -67,6 +92,13 @@ export const MatterList = (props: MatterListProps) => {
           </Card>
         );
       })}
+      <UpdateMatterModal
+        uuid={props.uuid}
+        getMatterList={props.getMatterList}
+        matter={matter}
+        opened={isOpened}
+        setOpened={setIsOpened}
+      />
     </div>
   );
 };
