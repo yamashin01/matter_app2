@@ -85,104 +85,100 @@ export const AddMatterModal = (props: Props) => {
 
   return (
     <>
-      {props.opened ? (
-        <Modal
-          opened={props.opened}
-          onClose={closeModal}
-          size="70%"
-          title="新規案件の追加"
-          overflow="inside"
-        >
-          <section className="m-4">
-            <h2 className="text-xl mb-4">基本情報</h2>
-            <div className="m-4">
-              <div className="mb-4">
-                <TextInput
-                  label="案件名"
-                  required
-                  style={{ flex: 1 }}
-                  onChange={(event) => setTitle(event.currentTarget.value)}
-                />
-              </div>
-              <div className="mb-4 justify-between flex w-auto">
-                <NativeSelect
-                  label="チーム"
-                  required
-                  data={teamList}
-                  onChange={(event) => setTeam(event.currentTarget.value)}
-                />
-                <NativeSelect
-                  label="分類"
-                  required
-                  data={classificationList}
-                  onChange={(event) => {
-                    setClassification(event.currentTarget.value);
-                  }}
-                />
-                <TextInput
-                  label="trelloカードURL"
-                  placeholder="https://trello.com/XXXX"
-                  required
-                  value={trelloUrl}
-                  onChange={(event) => setTrelloUrl(event.currentTarget.value)}
-                />
-              </div>
-              <div className="flex mb-4 justify-between w-full">
-                <TextInput
-                  label="取引先"
-                  className="w-full"
-                  placeholder="株式会社○○○○"
-                  onChange={(event) => setCustomer(event.currentTarget.value)}
-                />
-                <NumberInput
-                  label="請求額"
-                  defaultValue={1000}
-                  onChange={(value) =>
-                    typeof value == "number"
-                      ? setBillingAmount(value)
-                      : setBillingAmount(0)
-                  }
-                />
-              </div>
-              <div className="flex mb-4 justify-between w-auto">
-                <DatePicker
-                  placeholder="2022/1/1"
-                  label="案件開始日"
-                  onChange={setStartedDate}
-                />
-                <DatePicker
-                  placeholder="2022/1/1"
-                  label="請求日"
-                  onChange={setBillingDate}
-                />
-                <DatePicker
-                  placeholder="2022/1/1"
-                  label="振込期限"
-                  onChange={setPaymentDueDate}
-                />
-              </div>
-              <div className="mb-4 w-full">
-                <Textarea
-                  label="コメント"
-                  onChange={(event) => setComment(event.currentTarget.value)}
-                />
-              </div>
+      <Modal
+        opened={props.opened}
+        onClose={closeModal}
+        size="70%"
+        title="新規案件の追加"
+        overflow="inside"
+      >
+        <section className="m-4">
+          <h2 className="text-xl mb-4">基本情報</h2>
+          <div className="m-4">
+            <div className="mb-4">
+              <TextInput
+                label="案件名"
+                required
+                style={{ flex: 1 }}
+                onChange={(event) => setTitle(event.currentTarget.value)}
+              />
             </div>
-            <div className="flex justify-between mb-4">
-              <Button onClick={() => handleAddMatter(props.uuid)}>
-                案件追加
-              </Button>
-              <Button color="green" onClick={closeModal}>
-                キャンセル
-              </Button>
-              <div className="w-32 p-2"></div>
-              <div className="w-32 p-2"></div>
+            <div className="mb-4 justify-between flex w-auto">
+              <NativeSelect
+                label="チーム"
+                required
+                data={teamList}
+                onChange={(event) => setTeam(event.currentTarget.value)}
+              />
+              <NativeSelect
+                label="分類"
+                required
+                data={classificationList}
+                onChange={(event) => {
+                  setClassification(event.currentTarget.value);
+                }}
+              />
+              <TextInput
+                label="trelloカードURL"
+                placeholder="https://trello.com/XXXX"
+                required
+                value={trelloUrl}
+                onChange={(event) => setTrelloUrl(event.currentTarget.value)}
+              />
             </div>
-          </section>
-        </Modal>
-      ) : (
-        <div></div>
-      )}
+            <div className="flex mb-4 justify-between w-full">
+              <TextInput
+                label="取引先"
+                className="w-full"
+                placeholder="株式会社○○○○"
+                onChange={(event) => setCustomer(event.currentTarget.value)}
+              />
+              <NumberInput
+                label="請求額"
+                defaultValue={1000}
+                onChange={(value) =>
+                  typeof value == "number"
+                    ? setBillingAmount(value)
+                    : setBillingAmount(0)
+                }
+              />
+            </div>
+            <div className="flex mb-4 justify-between w-auto">
+              <DatePicker
+                placeholder="2022/1/1"
+                label="案件開始日"
+                onChange={setStartedDate}
+              />
+              <DatePicker
+                placeholder="2022/1/1"
+                label="請求日"
+                onChange={setBillingDate}
+              />
+              <DatePicker
+                placeholder="2022/1/1"
+                label="振込期限"
+                onChange={setPaymentDueDate}
+              />
+            </div>
+            <div className="mb-4 w-full">
+              <Textarea
+                label="コメント"
+                onChange={(event) => setComment(event.currentTarget.value)}
+              />
+            </div>
+          </div>
+          <div className="flex justify-between mb-4">
+            <Button onClick={() => handleAddMatter(props.uuid)}>
+              案件追加
+            </Button>
+            <Button color="green" onClick={closeModal}>
+              キャンセル
+            </Button>
+            <div className="w-32 p-2"></div>
+            <div className="w-32 p-2"></div>
+          </div>
+        </section>
+      </Modal>
     </>
   );
 };
