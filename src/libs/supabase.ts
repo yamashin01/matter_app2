@@ -13,3 +13,15 @@ if (!SUPABASE_KEY) {
 }
 
 export const client = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// 案件情報を取得する
+export const getMatterData = async () => {
+  const { data, error } = await client
+    .from("matter")
+    .select("*")
+    .order("title");
+  if (!error && data) {
+    return data;
+  }
+  return [];
+};
