@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   Modal,
   NativeSelect,
   NumberInput,
@@ -48,6 +49,7 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
   const [comment, setComment] = useState<string | number | undefined>(
     props.matter.comment
   );
+  const [fixed, setFixed] = useState<boolean>(props.matter.fixed_flg);
 
   const closeModal = useCallback(() => {
     props.setOpened(false);
@@ -74,6 +76,7 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
             billing_date: billingDate,
             payment_due_date: paymentDueDate,
             comment: comment,
+            fixed_flg: fixed,
           },
         ])
         .match({ id: props.matter.id });
@@ -112,6 +115,14 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
         title="案件の更新"
         overflow="inside"
       >
+        <div className="flex justify-between">
+          <h4 className="mb-4">案件ID：{props.matter.id}</h4>
+          <Checkbox
+            defaultChecked={props.matter.fixed_flg}
+            label="確定する"
+            onChange={(e) => setFixed(e.currentTarget.checked)}
+          />
+        </div>
         <section className="m-4">
           <h2 className="text-xl mb-4">基本情報</h2>
           <div className="m-4">

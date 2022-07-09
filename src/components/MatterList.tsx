@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Badge, Card, Group, Text } from "@mantine/core";
 import { UpdateMatterModal } from "./UpdateMatterModal";
 
@@ -16,9 +16,9 @@ export type Matter = {
   billing_date?: Date; // 請求日
   payment_due_date?: Date; // 振込期限
   comment?: string; // コメント
-  deleted_flag: boolean; // 削除フラグ
-  checked_flag: boolean; // チェック完了フラグ
-  fixed_flag: boolean; // 確定フラグ
+  deleted_flg: boolean; // 削除フラグ
+  checked_flg: boolean; // チェック完了フラグ
+  fixed_flg: boolean; // 確定フラグ
 };
 
 type MatterListProps = {
@@ -29,7 +29,7 @@ type MatterListProps = {
 
 export const MatterList = (props: MatterListProps) => {
   const [isOpened, setIsOpened] = useState<boolean>(false);
-  const [matter, setMatter] = useState<Matter>({
+  const [matterData, setMatterData] = useState<Matter>({
     id: 0,
     user_id: props.uuid,
     title: "",
@@ -43,15 +43,18 @@ export const MatterList = (props: MatterListProps) => {
     payment_due_date: new Date(),
     comment: "",
     created_time: new Date(),
-    checked_flag: false,
-    deleted_flag: false,
-    fixed_flag: false,
+    checked_flg: false,
+    deleted_flg: false,
+    fixed_flg: false,
   });
 
-  const handleUpdateMatterModal = (matter: Matter, opened: boolean) => {
-    setIsOpened(opened);
-    setMatter(matter);
-  };
+  const handleUpdateMatterModal = useCallback(
+    (matter: Matter, opened: boolean) => {
+      setMatterData(matter);
+      setIsOpened(opened);
+    },
+    []
+  );
 
   return (
     <div className="m-10">
@@ -67,19 +70,16 @@ export const MatterList = (props: MatterListProps) => {
             <Card.Section className="flex justify-between">
               <p>{matter.title}</p>
               <Badge
-                color={matter.fixed_flag ? "blue" : "pink"}
+                color={matter.fixed_flg ? "blue" : "pink"}
                 variant="light"
                 className="my-2 mx-5 text-base"
               >
-                {matter.fixed_flag ? "確定" : "未確定"}
+                {matter.fixed_flg ? "確定" : "未確定"}
               </Badge>
             </Card.Section>
 
             <Group position="apart">
-              <Text
-                weight={300}
-                className="flex justify-between place-items-stretch"
-              >
+              <Text weight={300} className="flex justify-between">
                 <p>チーム：{matter.team}</p>
                 <p>分類：{matter.classification}</p>
               </Text>
@@ -95,7 +95,7 @@ export const MatterList = (props: MatterListProps) => {
       <UpdateMatterModal
         uuid={props.uuid}
         getMatterList={props.getMatterList}
-        matter={matter}
+        matter={matterData}
         opened={isOpened}
         setOpened={setIsOpened}
       />
