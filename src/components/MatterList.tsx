@@ -64,17 +64,27 @@ export const MatterList = (props: MatterListProps) => {
             key={matter.id}
             shadow="sm"
             p="lg"
-            className="mb-5 border hover:cursor-pointer"
+            className="mb-5 border hover:cursor-pointer h-25 rounded"
             onClick={() => handleUpdateMatterModal(matter, true)}
           >
             <Card.Section className="flex justify-between">
               <p>{matter.title}</p>
               <Badge
-                color={matter.fixed_flg ? "blue" : "pink"}
+                color={
+                  matter.checked_flg
+                    ? "green"
+                    : matter.fixed_flg
+                    ? "blue"
+                    : "pink"
+                }
                 variant="light"
                 className="my-2 mx-5 text-base"
               >
-                {matter.fixed_flg ? "確定" : "未確定"}
+                {matter.checked_flg
+                  ? "チェック済"
+                  : matter.fixed_flg
+                  ? "確定"
+                  : "未確定"}
               </Badge>
             </Card.Section>
 
