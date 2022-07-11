@@ -9,7 +9,7 @@ const Home = () => {
   const { user } = Auth.useUser();
 
   const [matterList, setMatterList] = useState<Matter[]>([]);
-  const [opened, setOpened] = useState<boolean>(false);
+  const [isOpened, setIsOpened] = useState<boolean>(false);
 
   const getMatterList = useCallback(async () => {
     const data = await getMatterData();
@@ -29,7 +29,7 @@ const Home = () => {
             shadow="sm"
             p="lg"
             className="border mb-5 hover:cursor-pointer"
-            onClick={() => setOpened(true)}
+            onClick={() => setIsOpened(true)}
           >
             新規案件追加
           </Card>
@@ -40,8 +40,8 @@ const Home = () => {
           />
           <AddMatterModal
             uuid={user.id}
-            opened={opened}
-            setOpened={setOpened}
+            isOpened={isOpened}
+            setIsOpened={setIsOpened}
             getMatterList={getMatterList}
           />
         </div>

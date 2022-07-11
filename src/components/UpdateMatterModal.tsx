@@ -16,15 +16,14 @@ type PropsUpdateMatter = {
   uuid: string;
   getMatterList: VoidFunction;
   matter: Matter;
-  opened: boolean;
-  setOpened: React.Dispatch<boolean>;
+  isOpened: boolean;
+  setIsOpened: React.Dispatch<boolean>;
 };
 
 const teamList = ["本部", "事業創出", "広報", "SDGs", "事務局"];
 const classificationList = ["会員費", "受託案件", "認定ファシリ"];
 
 export const UpdateMatterModal = (props: PropsUpdateMatter) => {
-  console.log(`${UpdateMatterModal} isOpened = ${props.opened}`);
   const [title, setTitle] = useState<string>(props.matter.title);
   const [team, setTeam] = useState<string>(props.matter.team);
   const [classification, setClassification] = useState<string>(
@@ -52,7 +51,7 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
   const [fixed, setFixed] = useState<boolean>(props.matter.fixed_flg);
 
   const closeModal = useCallback(() => {
-    props.setOpened(false);
+    props.setIsOpened(false);
   }, []);
 
   const handleUpdateMatter = useCallback(
@@ -117,39 +116,35 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
       >
         <div className="flex justify-between">
           <h4 className="mb-4">案件ID：{props.matter.id}</h4>
-          <Checkbox
-            defaultChecked={props.matter.fixed_flg}
-            label="確定する"
-            onChange={(e) => setFixed(e.currentTarget.checked)}
-          />
         </div>
         <section className="m-4">
           <h2 className="text-xl mb-4">基本情報</h2>
           <div className="m-4">
-            <div className="mb-4">
+            <div className="flex mb-4 justify-between">
               <TextInput
                 label="案件名"
                 required
                 defaultValue={props.matter.title}
+                className="mr-2"
                 style={{ flex: 1 }}
-                onChange={(event) => setTitle(event.currentTarget.value)}
+                onChange={(e) => setTitle(e.currentTarget.value)}
               />
-            </div>
-            <div className="mb-4 justify-between flex w-auto">
               <NativeSelect
                 label="チーム"
                 required
                 defaultValue={props.matter.team}
+                className="mr-2"
                 data={teamList}
-                onChange={(event) => setTeam(event.currentTarget.value)}
+                onChange={(e) => setTeam(e.currentTarget.value)}
               />
               <NativeSelect
                 label="分類"
                 required
                 defaultValue={props.matter.classification}
+                className="mr-2"
                 data={classificationList}
-                onChange={(event) => {
-                  setClassification(event.currentTarget.value);
+                onChange={(e) => {
+                  setClassification(e.currentTarget.value);
                 }}
               />
               <TextInput
@@ -157,38 +152,39 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
                 placeholder="https://trello.com/XXXX"
                 required
                 defaultValue={props.matter.trello_url}
-                onChange={(event) => setTrelloUrl(event.currentTarget.value)}
+                onChange={(e) => setTrelloUrl(e.currentTarget.value)}
               />
             </div>
             <div className="flex mb-4 justify-between w-full">
               <TextInput
                 label="取引先"
-                className="w-full"
+                className="mr-2 w-1/3"
                 placeholder="株式会社○○○○"
                 defaultValue={props.matter.customer}
-                onChange={(event) => setCustomer(event.currentTarget.value)}
+                onChange={(e) => setCustomer(e.currentTarget.value)}
               />
               <NumberInput
                 label="請求額"
                 defaultValue={props.matter.billing_amount}
+                className="mr-2"
                 onChange={(value) =>
                   typeof value == "number"
                     ? setBillingAmount(value)
                     : setBillingAmount(0)
                 }
               />
-            </div>
-            <div className="flex mb-4 justify-between w-auto">
               <DatePicker
                 placeholder="2022/1/1"
                 label="案件開始日"
                 defaultValue={props.matter.started_date}
+                className="mr-2"
                 onChange={setStartedDate}
               />
               <DatePicker
                 placeholder="2022/1/1"
                 label="請求日"
                 defaultValue={props.matter.billing_date}
+                className="mr-2"
                 onChange={setBillingDate}
               />
               <DatePicker
@@ -202,7 +198,7 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
               <Textarea
                 label="コメント"
                 defaultValue={props.matter.comment}
-                onChange={(event) => setComment(event.currentTarget.value)}
+                onChange={(e) => setComment(e.currentTarget.value)}
               />
             </div>
           </div>

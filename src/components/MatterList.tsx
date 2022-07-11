@@ -49,9 +49,9 @@ export const MatterList = (props: MatterListProps) => {
   });
 
   const handleUpdateMatterModal = useCallback(
-    (matter: Matter, opened: boolean) => {
+    (matter: Matter, isOpened: boolean) => {
       setMatterData(matter);
-      setIsOpened(opened);
+      setIsOpened(isOpened);
     },
     []
   );
@@ -100,14 +100,14 @@ export const MatterList = (props: MatterListProps) => {
               <br /> {`振込期限：${matter.payment_due_date}`}
             </Text>
           </Card>
-        );
+        ) : null;
       })}
       <UpdateMatterModal
         uuid={props.uuid}
         getMatterList={props.getMatterList}
         matter={matterData}
-        opened={isOpened}
-        setOpened={setIsOpened}
+        isOpened={isOpened}
+        setIsOpened={setIsOpened}
       />
     </div>
   );

@@ -13,8 +13,8 @@ import { client } from "src/libs/supabase";
 type Props = {
   uuid: string;
   getMatterList: VoidFunction;
-  opened: boolean;
-  setOpened: React.Dispatch<boolean>;
+  isOpened: boolean;
+  setIsOpened: React.Dispatch<boolean>;
 };
 
 const teamList = ["本部", "事業創出", "広報", "SDGs", "事務局"];
@@ -33,7 +33,7 @@ export const AddMatterModal = (props: Props) => {
   const [comment, setComment] = useState<string | null>("");
 
   const closeModal = useCallback(() => {
-    props.setOpened(false);
+    props.setIsOpened(false);
   }, []);
 
   const handleAddMatter = useCallback(
@@ -86,7 +86,7 @@ export const AddMatterModal = (props: Props) => {
   return (
     <>
       <Modal
-        opened={props.opened}
+        opened={props.isOpened}
         onClose={closeModal}
         size="70%"
         title="新規案件の追加"
@@ -94,28 +94,29 @@ export const AddMatterModal = (props: Props) => {
       >
         <section className="m-4">
           <h2 className="text-xl mb-4">基本情報</h2>
-          <div className="m-4">
-            <div className="mb-4">
+          <div className="mb-8">
+            <div className="flex mb-4 justify-between">
               <TextInput
                 label="案件名"
                 required
+                className="mr-2"
                 style={{ flex: 1 }}
-                onChange={(event) => setTitle(event.currentTarget.value)}
+                onChange={(e) => setTitle(e.currentTarget.value)}
               />
-            </div>
-            <div className="mb-4 justify-between flex w-auto">
               <NativeSelect
                 label="チーム"
                 required
+                className="mr-2"
                 data={teamList}
-                onChange={(event) => setTeam(event.currentTarget.value)}
+                onChange={(e) => setTeam(e.currentTarget.value)}
               />
               <NativeSelect
                 label="分類"
                 required
+                className="mr-2"
                 data={classificationList}
-                onChange={(event) => {
-                  setClassification(event.currentTarget.value);
+                onChange={(e) => {
+                  setClassification(e.currentTarget.value);
                 }}
               />
               <TextInput
@@ -123,18 +124,19 @@ export const AddMatterModal = (props: Props) => {
                 placeholder="https://trello.com/XXXX"
                 required
                 value={trelloUrl}
-                onChange={(event) => setTrelloUrl(event.currentTarget.value)}
+                onChange={(e) => setTrelloUrl(e.currentTarget.value)}
               />
             </div>
             <div className="flex mb-4 justify-between w-full">
               <TextInput
                 label="取引先"
-                className="w-full"
                 placeholder="株式会社○○○○"
-                onChange={(event) => setCustomer(event.currentTarget.value)}
+                className="mr-2 w-1/3"
+                onChange={(e) => setCustomer(e.currentTarget.value)}
               />
               <NumberInput
                 label="請求額"
+                className="mr-2"
                 defaultValue={1000}
                 onChange={(value) =>
                   typeof value == "number"
@@ -142,28 +144,28 @@ export const AddMatterModal = (props: Props) => {
                     : setBillingAmount(0)
                 }
               />
-            </div>
-            <div className="flex mb-4 justify-between w-auto">
               <DatePicker
-                placeholder="2022/1/1"
                 label="案件開始日"
+                placeholder="2022/1/1"
+                className="mr-2"
                 onChange={setStartedDate}
               />
               <DatePicker
-                placeholder="2022/1/1"
                 label="請求日"
+                placeholder="2022/1/1"
+                className="mr-2"
                 onChange={setBillingDate}
               />
               <DatePicker
-                placeholder="2022/1/1"
                 label="振込期限"
+                placeholder="2022/1/1"
                 onChange={setPaymentDueDate}
               />
             </div>
             <div className="mb-4 w-full">
               <Textarea
                 label="コメント"
-                onChange={(event) => setComment(event.currentTarget.value)}
+                onChange={(e) => setComment(e.currentTarget.value)}
               />
             </div>
           </div>
