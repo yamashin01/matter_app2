@@ -1,5 +1,6 @@
 import {
   Button,
+  Checkbox,
   Modal,
   NativeSelect,
   NumberInput,
@@ -38,9 +39,8 @@ export const AddMatterModal = (props: Props) => {
 
   const handleAddMatter = useCallback(
     async (uuid: string) => {
-      console.log(`handleAddMatter execute uuid = ${uuid}`);
       if (title == "") {
-        alert("Input Title.");
+        alert("案件名を追加してください。");
         return;
       }
       const { data, error } = await client.from("matter").insert([
@@ -62,6 +62,7 @@ export const AddMatterModal = (props: Props) => {
         alert("案件の追加に失敗しました。");
       } else {
         if (data) {
+          alert(`新規案件[${title}]を追加しました。`);
           props.getMatterList();
           closeModal();
         }
@@ -88,10 +89,16 @@ export const AddMatterModal = (props: Props) => {
       <Modal
         opened={props.isOpened}
         onClose={closeModal}
-        size="70%"
+        size="80%"
         title="新規案件の追加"
         overflow="inside"
       >
+        <Checkbox
+          className="flex justify-end"
+          defaultChecked={false}
+          label="確定する"
+          onChange={(e) => setFixed(e.currentTarget.checked)}
+        />
         <section className="m-4">
           <h2 className="text-xl mb-4">基本情報</h2>
           <div className="mb-8">

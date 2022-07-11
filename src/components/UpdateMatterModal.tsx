@@ -1,6 +1,5 @@
 import {
   Button,
-  Checkbox,
   Modal,
   NativeSelect,
   NumberInput,
@@ -83,7 +82,13 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
         alert("案件の更新に失敗しました。");
       } else {
         if (data) {
-          alert("案件を更新しました。");
+          if (isDeleted) {
+            alert("案件を削除しました。");
+          } else if (isFixed) {
+            alert("案件を確定しました。");
+          } else {
+            alert("案件を更新しました。");
+          }
           props.getMatterList();
           closeModal();
         }
@@ -108,9 +113,9 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
   return (
     <>
       <Modal
-        opened={props.opened}
+        opened={props.isOpened}
         onClose={closeModal}
-        size="70%"
+        size="80%"
         title="案件の更新"
         overflow="inside"
       >
@@ -202,15 +207,31 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
               />
             </div>
           </div>
-          <div className="flex justify-between mb-4">
-            <Button onClick={() => handleUpdateMatter(props.uuid)}>
-              案件更新
+          <div className="flex justify-between">
+            <div className="flex justify-items-center">
+              <Button
+                className="mr-4"
+                onClick={() => handleUpdateMatter(props.uuid, false, false)}
+              >
+                案件更新
+              </Button>
+              <Button
+                className="mr-4"
+                color="red"
+                onClick={() => handleUpdateMatter(props.uuid, true, false)}
+              >
+                案件確定
+              </Button>
+              <Button className="mr-4" color="green" onClick={closeModal}>
+                キャンセル
+              </Button>
+            </div>
+            <Button
+              color="gray"
+              onClick={() => handleUpdateMatter(props.uuid, false, true)}
+            >
+              案件削除
             </Button>
-            <Button color="green" onClick={closeModal}>
-              キャンセル
-            </Button>
-            <div className="w-32 p-2"></div>
-            <div className="w-32 p-2"></div>
           </div>
         </section>
       </Modal>

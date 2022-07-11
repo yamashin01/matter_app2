@@ -55,17 +55,30 @@ export const MatterList = (props: MatterListProps) => {
     },
     []
   );
+  const handleAlert = useCallback((checkedFlg: boolean) => {
+    if (checkedFlg) {
+      alert("チェック済のため更新できません。");
+    } else {
+      alert("確定済のため更新できません。");
+    }
+  }, []);
 
   return (
     <div className="m-10">
       {props.matterList.map((matter) => {
-        return (
+        return !matter.deleted_flg ? (
           <Card
             key={matter.id}
             shadow="sm"
             p="lg"
             className="mb-5 border hover:cursor-pointer h-25 rounded"
-            onClick={() => handleUpdateMatterModal(matter, true)}
+            onClick={
+              matter.checked_flg
+                ? () => handleAlert(matter.checked_flg)
+                : matter.fixed_flg
+                ? () => handleAlert(matter.checked_flg)
+                : () => handleUpdateMatterModal(matter, true)
+            }
           >
             <Card.Section className="flex justify-between">
               <p>{matter.title}</p>
