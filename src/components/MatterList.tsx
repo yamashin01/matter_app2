@@ -19,6 +19,14 @@ export type Matter = {
   deleted_flg: boolean; // 削除フラグ
   checked_flg: boolean; // チェック完了フラグ
   fixed_flg: boolean; // 確定フラグ
+  cost_name1: string; // 経費項目1
+  cost_item1: string; // 品目1
+  cost_date_of_payment1: Date; // 支払い期日1
+  cost_supplier1: string; // 支払い先1
+  cost_withholding1: boolean; // 源泉1
+  cost_certificate1: string; // 請求書 or 領収書1
+  cost_amount_of_money1: number; // 金額1
+  cost_remarks1: string; // 備考1
 };
 
 type MatterListProps = {
@@ -46,6 +54,14 @@ export const MatterList = (props: MatterListProps) => {
     checked_flg: false,
     deleted_flg: false,
     fixed_flg: false,
+    cost_name1: "",
+    cost_item1: "",
+    cost_date_of_payment1: new Date(),
+    cost_supplier1: "",
+    cost_withholding1: false,
+    cost_certificate1: "",
+    cost_amount_of_money1: 0,
+    cost_remarks1: "",
   });
 
   const handleUpdateMatterModal = useCallback(

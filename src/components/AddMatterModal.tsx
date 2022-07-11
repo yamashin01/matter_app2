@@ -4,6 +4,7 @@ import {
   Modal,
   NativeSelect,
   NumberInput,
+  Table,
   Textarea,
   TextInput,
 } from "@mantine/core";
@@ -20,6 +21,18 @@ type Props = {
 
 const teamList = ["本部", "事業創出", "広報", "SDGs", "事務局"];
 const classificationList = ["会員費", "受託案件", "認定ファシリ"];
+const costclassList = [
+  "備品購入",
+  "システム料",
+  "施設利用料",
+  "メンバー報酬",
+  "外注費",
+  "シンラボ活動費",
+  "広告宣伝費",
+  "教育・研修費",
+  "営業費",
+  "その他",
+];
 
 export const AddMatterModal = (props: Props) => {
   const [title, setTitle] = useState<string>("");
@@ -32,10 +45,43 @@ export const AddMatterModal = (props: Props) => {
   const [billingDate, setBillingDate] = useState<Date | null>(new Date());
   const [paymentDueDate, setPaymentDueDate] = useState<Date | null>(new Date());
   const [comment, setComment] = useState<string | null>("");
+  const [costName1, setCostName1] = useState<string | null>("");
+  const [costItem1, setCostItem1] = useState<string | null>("");
+  const [costPaymentDate1, setCostPaymentDate1] = useState<Date | null>(
+    new Date()
+  );
+  const [costSupplier1, setCostSupplier1] = useState<string | null>("");
+  const [costWithholding1, setCostWithholding1] = useState<boolean | null>(
+    false
+  );
+  const [costCertificate1, setCostCertificate1] = useState<string | null>("");
+  const [costAmountOfMoney1, setCostAmountOfMoney1] = useState<
+    number | undefined
+  >(0);
+  const [costRemarks1, setCostRemarks1] = useState<string | null>("");
+  const [fixed, setFixed] = useState<boolean>(false);
 
   const closeModal = useCallback(() => {
     props.setIsOpened(false);
   }, []);
+
+  const costItemList = [
+    "経費項目",
+    "品目",
+    "支払日",
+    "支払い先",
+    "源泉",
+    "受領書",
+    "金額（税別）",
+    "備考",
+  ];
+  const threads = (
+    <tr>
+      {costItemList.map((threadItem, index) => {
+        return <th key={index}>{threadItem}</th>;
+      })}
+    </tr>
+  );
 
   const handleAddMatter = useCallback(
     async (uuid: string) => {
@@ -56,6 +102,15 @@ export const AddMatterModal = (props: Props) => {
           billing_date: billingDate,
           payment_due_date: paymentDueDate,
           comment: comment,
+          cost_name1: costName1,
+          cost_item1: costItem1,
+          cost_date_of_payment1: costPaymentDate1,
+          cost_supplier1: costSupplier1,
+          cost_withholding1: costWithholding1,
+          cost_certificate1: costCertificate1,
+          cost_amount_of_money1: costAmountOfMoney1,
+          cost_remarks1: costRemarks1,
+          fixed_flg: fixed,
         },
       ]);
       if (error) {
@@ -79,6 +134,14 @@ export const AddMatterModal = (props: Props) => {
       billingDate,
       paymentDueDate,
       comment,
+      costName1,
+      costItem1,
+      costPaymentDate1,
+      costSupplier1,
+      costWithholding1,
+      costCertificate1,
+      costAmountOfMoney1,
+      costRemarks1,
       closeModal,
       props,
     ]
@@ -176,8 +239,69 @@ export const AddMatterModal = (props: Props) => {
               />
             </div>
           </div>
-          <div className="flex justify-between mb-4">
-            <Button onClick={() => handleAddMatter(props.uuid)}>
+          <h2 className="text-xl mb-4">コスト情報</h2>
+          <Table className="mb-4">
+            <thead>{threads}</thead>
+            <tbody>
+              <tr>
+                <td>
+                  <TextInput
+                    onChange={(e) => setCostName1(e.currentTarget.value)}
+                  />
+                </td>
+                <td>
+                  <NativeSelect
+                    data={costclassList}
+                    onChange={(e) => setCostItem1(e.currentTarget.value)}
+                  />
+                </td>
+                <td>
+                  <DatePicker
+                    placeholder="2022/1/1"
+                    onChange={setCostPaymentDate1}
+                  />
+                </td>
+                <td>
+                  <TextInput
+                    onChange={(e) => setCostSupplier1(e.currentTarget.value)}
+                  />
+                </td>
+                <td>
+                  <NativeSelect
+                    data={["あり", "なし"]}
+                    onChange={(e) =>
+                      setCostWithholding1(
+                        e.currentTarget.value == "あり" ? true : false
+                      )
+                    }
+                  />
+                </td>
+                <td>
+                  <NativeSelect
+                    data={["請求書", "領収書"]}
+                    onChange={(e) => setCostCertificate1(e.currentTarget.value)}
+                  />
+                </td>
+                <td>
+                  <NumberInput
+                    defaultValue={0}
+                    onChange={(val) => setCostAmountOfMoney1(val)}
+                    min={0}
+                  />
+                </td>
+                <td>
+                  <Textarea
+                    onChange={(e) => setCostRemarks1(e.currentTarget.value)}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+          <div className="flex">
+            <Button
+              className="mr-4"
+              onClick={() => handleAddMatter(props.uuid)}
+            >
               案件追加
             </Button>
             <Button color="green" onClick={closeModal}>

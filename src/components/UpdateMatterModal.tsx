@@ -3,6 +3,7 @@ import {
   Modal,
   NativeSelect,
   NumberInput,
+  Table,
   Textarea,
   TextInput,
 } from "@mantine/core";
@@ -21,6 +22,18 @@ type PropsUpdateMatter = {
 
 const teamList = ["本部", "事業創出", "広報", "SDGs", "事務局"];
 const classificationList = ["会員費", "受託案件", "認定ファシリ"];
+const costclassList = [
+  "備品購入",
+  "システム料",
+  "施設利用料",
+  "メンバー報酬",
+  "外注費",
+  "シンラボ活動費",
+  "広告宣伝費",
+  "教育・研修費",
+  "営業費",
+  "その他",
+];
 
 export const UpdateMatterModal = (props: PropsUpdateMatter) => {
   const [title, setTitle] = useState<string>(props.matter.title);
@@ -47,14 +60,45 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
   const [comment, setComment] = useState<string | number | undefined>(
     props.matter.comment
   );
-  const [fixed, setFixed] = useState<boolean>(props.matter.fixed_flg);
+  const [costName1, setCostName1] = useState<string | null>("");
+  const [costItem1, setCostItem1] = useState<string | null>("");
+  const [costPaymentDate1, setCostPaymentDate1] = useState<Date | null>(
+    new Date()
+  );
+  const [costSupplier1, setCostSupplier1] = useState<string | null>("");
+  const [costWithholding1, setCostWithholding1] = useState<boolean | null>(
+    false
+  );
+  const [costCertificate1, setCostCertificate1] = useState<string | null>("");
+  const [costAmountOfMoney1, setCostAmountOfMoney1] = useState<
+    number | undefined
+  >(0);
+  const [costRemarks1, setCostRemarks1] = useState<string | null>("");
+
+  const costItemList = [
+    "経費項目",
+    "品目",
+    "支払日",
+    "支払い先",
+    "源泉",
+    "受領書",
+    "金額（税別）",
+    "備考",
+  ];
+  const threads = (
+    <tr>
+      {costItemList.map((threadItem, index) => {
+        return <th key={index}>{threadItem}</th>;
+      })}
+    </tr>
+  );
 
   const closeModal = useCallback(() => {
     props.setIsOpened(false);
   }, []);
 
   const handleUpdateMatter = useCallback(
-    async (uuid: string) => {
+    async (uuid: string, isFixed: boolean, isDeleted: boolean) => {
       if (title == "") {
         alert("Input Title.");
         return;
@@ -74,7 +118,16 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
             billing_date: billingDate,
             payment_due_date: paymentDueDate,
             comment: comment,
-            fixed_flg: fixed,
+            cost_name1: costName1,
+            cost_item1: costItem1,
+            cost_date_of_payment1: costPaymentDate1,
+            cost_supplier1: costSupplier1,
+            cost_withholding1: costWithholding1,
+            cost_certificate1: costCertificate1,
+            cost_amount_of_money1: costAmountOfMoney1,
+            cost_remarks1: costRemarks1,
+            fixed_flg: isFixed,
+            deleted_flg: isDeleted,
           },
         ])
         .match({ id: props.matter.id });
@@ -105,6 +158,14 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
       billingDate,
       paymentDueDate,
       comment,
+      costName1,
+      costItem1,
+      costPaymentDate1,
+      costSupplier1,
+      costWithholding1,
+      costCertificate1,
+      costAmountOfMoney1,
+      costRemarks1,
       closeModal,
       props,
     ]
@@ -207,6 +268,73 @@ export const UpdateMatterModal = (props: PropsUpdateMatter) => {
               />
             </div>
           </div>
+          <h2 className="text-xl mb-4">コスト情報</h2>
+          <Table className="mb-4">
+            <thead>{threads}</thead>
+            <tbody>
+              <tr>
+                <td>
+                  <TextInput
+                    defaultValue={props.matter.cost_name1}
+                    onChange={(e) => setCostName1(e.currentTarget.value)}
+                  />
+                </td>
+                <td>
+                  <NativeSelect
+                    defaultValue={props.matter.cost_item1}
+                    data={costclassList}
+                    onChange={(e) => setCostItem1(e.currentTarget.value)}
+                  />
+                </td>
+                <td>
+                  <DatePicker
+                    placeholder="2022/1/1"
+                    defaultValue={props.matter.cost_date_of_payment1}
+                    onChange={setCostPaymentDate1}
+                  />
+                </td>
+                <td>
+                  <TextInput
+                    defaultValue={props.matter.cost_supplier1}
+                    onChange={(e) => setCostSupplier1(e.currentTarget.value)}
+                  />
+                </td>
+                <td>
+                  <NativeSelect
+                    data={["あり", "なし"]}
+                    defaultValue={
+                      props.matter.cost_withholding1 ? "あり" : "なし"
+                    }
+                    onChange={(e) =>
+                      setCostWithholding1(
+                        e.currentTarget.value == "あり" ? true : false
+                      )
+                    }
+                  />
+                </td>
+                <td>
+                  <NativeSelect
+                    data={["請求書", "領収書"]}
+                    defaultValue={props.matter.cost_certificate1}
+                    onChange={(e) => setCostCertificate1(e.currentTarget.value)}
+                  />
+                </td>
+                <td>
+                  <NumberInput
+                    defaultValue={props.matter.cost_amount_of_money1}
+                    onChange={(val) => setCostAmountOfMoney1(val)}
+                    min={0}
+                  />
+                </td>
+                <td>
+                  <Textarea
+                    defaultValue={props.matter.cost_remarks1}
+                    onChange={(e) => setCostRemarks1(e.currentTarget.value)}
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </Table>
           <div className="flex justify-between">
             <div className="flex justify-items-center">
               <Button
