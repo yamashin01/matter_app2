@@ -17,7 +17,13 @@ import {
 import { DatePicker } from "@mantine/dates";
 import { formList, useForm } from "@mantine/form";
 import React, { useCallback } from "react";
-import { client } from "src/libs/supabase";
+import { addMatterData } from "src/libs/supabase";
+import {
+  basicObjType,
+  classificationList,
+  costObjType,
+  teamList,
+} from "src/utils/typelist";
 import { Trash } from "tabler-icons-react";
 
 type Props = {
@@ -26,40 +32,6 @@ type Props = {
   isOpened: boolean;
   setIsOpened: React.Dispatch<boolean>;
 };
-
-const teamList = ["本部", "事業創出", "広報", "SDGs", "事務局"];
-const classificationList = [
-  "会員費",
-  "受託案件",
-  "認定ファシリ",
-  "ボードゲーム",
-  "イベント",
-  "その他",
-];
-
-interface basicObjType {
-  title: string;
-  team: string;
-  classification: string;
-  trelloUrl: string;
-  customer: string;
-  billing_amount: number;
-  started_date: Date;
-  billing_date: Date;
-  payment_due_date: Date;
-  comment: "";
-}
-
-interface costObjType {
-  name: string;
-  item: string;
-  payment_date: Date;
-  supplier: string;
-  withholding: boolean;
-  certificate: string;
-  amount_of_money: number;
-  remarks: string;
-}
 
 export const AddMatterModal = (props: Props) => {
   const closeModal = useCallback(() => {
@@ -191,71 +163,26 @@ export const AddMatterModal = (props: Props) => {
         alert("案件名を追加してください。");
         return;
       }
-      const { data, error } = await client.from("matter").insert([
-        {
-          user_id: uuid,
-          title: basicForm.values.title,
-          team: basicForm.values.team,
-          classification: basicForm.values.classification,
-          trello_url: basicForm.values.trelloUrl,
-          customer: basicForm.values.customer,
-          billing_amount: basicForm.values.billing_amount,
-          started_date: basicForm.values.started_date,
-          billing_date: basicForm.values.billing_date,
-          payment_due_date: basicForm.values.payment_due_date,
-          comment: basicForm.values.comment,
-          cost_data1:
-            costForm.values.costList[0] !== null
-              ? costForm.values.costList[0]
-              : null,
-          cost_data2:
-            costForm.values.costList[1] !== null
-              ? costForm.values.costList[1]
-              : null,
-          cost_data3:
-            costForm.values.costList[2] !== null
-              ? costForm.values.costList[2]
-              : null,
-          cost_data4:
-            costForm.values.costList[3] !== null
-              ? costForm.values.costList[3]
-              : null,
-          cost_data5:
-            costForm.values.costList[4] !== null
-              ? costForm.values.costList[4]
-              : null,
-          cost_data6:
-            costForm.values.costList[5] !== null
-              ? costForm.values.costList[5]
-              : null,
-          cost_data7:
-            costForm.values.costList[6] !== null
-              ? costForm.values.costList[6]
-              : null,
-          cost_data8:
-            costForm.values.costList[7] !== null
-              ? costForm.values.costList[7]
-              : null,
-          cost_data9:
-            costForm.values.costList[8] !== null
-              ? costForm.values.costList[8]
-              : null,
-          cost_data10:
-            costForm.values.costList[9] !== null
-              ? costForm.values.costList[9]
-              : null,
-          fixed_flg: fixed,
-        },
-      ]);
-      if (error) {
+      const data = addMatterData(
+        uuid,
+        basicForm.values,
+        costForm.values.costList,
+        fixed
+      );
+      if (!data) {
         alert("案件の追加に失敗しました。");
       } else {
-        if (data) {
-          alert(`新規案件[${basicForm.values.title}]を追加しました。`);
-          props.getMatterList();
-          costForm.values.costList.length = 0;
-          closeModal();
-        }
+        alert(`新規案件[${basicForm.values.title}]を追加しました。`);
+        props.getMatterList();
+        costForm.values.costList.length = 0;
+        basicForm.values.title = "";
+        basicForm.values.team = "";
+        basicForm.values.classification = "";
+        basicForm.values.customer = "";
+        basicForm.values.trelloUrl = "";
+        basicForm.values.comment = "";
+        basicForm.values.billing_amount = 0;
+        closeModal();
       }
     },
     [basicForm, costForm, closeModal, props]
