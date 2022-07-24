@@ -2,7 +2,6 @@ import {
   ActionIcon,
   Box,
   Button,
-  Checkbox,
   Code,
   Group,
   Modal,
@@ -17,7 +16,7 @@ import {
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
 import { formList, useForm } from "@mantine/form";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import { client } from "src/libs/supabase";
 import { Trash } from "tabler-icons-react";
 
@@ -38,6 +37,19 @@ const classificationList = [
   "その他",
 ];
 
+interface basicObjType {
+  title: string;
+  team: string;
+  classification: string;
+  trelloUrl: string;
+  customer: string;
+  billing_amount: number;
+  started_date: Date;
+  billing_date: Date;
+  payment_due_date: Date;
+  comment: "";
+}
+
 interface costObjType {
   name: string;
   item: string;
@@ -50,23 +62,32 @@ interface costObjType {
 }
 
 export const AddMatterModal = (props: Props) => {
-  const [title, setTitle] = useState<string>("");
-  const [team, setTeam] = useState<string>("");
-  const [classification, setClassification] = useState<string>("");
-  const [trelloUrl, setTrelloUrl] = useState<string>("");
-  const [customer, setCustomer] = useState<string | undefined>("");
-  const [billingAmount, setBillingAmount] = useState<number | null>(0);
-  const [startedDate, setStartedDate] = useState<Date | null>(new Date());
-  const [billingDate, setBillingDate] = useState<Date | null>(new Date());
-  const [paymentDueDate, setPaymentDueDate] = useState<Date | null>(new Date());
-  const [comment, setComment] = useState<string | null>("");
-  const [fixed, setFixed] = useState<boolean>(false);
-
   const closeModal = useCallback(() => {
     props.setIsOpened(false);
   }, []);
 
-  const form = useForm({
+  const basicForm = useForm<basicObjType>({
+    initialValues: {
+      title: "",
+      team: "",
+      classification: "",
+      trelloUrl: "",
+      customer: "",
+      billing_amount: 0,
+      started_date: new Date(),
+      billing_date: new Date(),
+      payment_due_date: new Date(),
+      comment: "",
+    },
+    validate: {
+      trelloUrl: (url) =>
+        url.indexOf("https://trello") !== 0
+          ? "trelloカードのURLを記載ください。"
+          : null,
+    },
+  });
+
+  const costForm = useForm({
     initialValues: {
       costList: formList<costObjType>([
         {
@@ -83,7 +104,7 @@ export const AddMatterModal = (props: Props) => {
     },
   });
 
-  const fields = form.values.costList.map((cost, index) => (
+  const costFieldList = costForm.values.costList.map((cost, index) => (
     <Group
       key={cost.name}
       mt="xs"
@@ -94,9 +115,9 @@ export const AddMatterModal = (props: Props) => {
         color="red"
         className="col-span-1"
         variant="hover"
-        onClick={() => form.removeListItem("costList", index)}
+        onClick={() => costForm.removeListItem("costList", index)}
       >
-        <Trash size={16} />
+        <Trash size={20} />
       </ActionIcon>
       <TextInput
         label="経費名"
@@ -104,7 +125,7 @@ export const AddMatterModal = (props: Props) => {
         className="col-span-3"
         required
         sx={{ flex: 1 }}
-        {...form.getListInputProps("costList", index, "name")}
+        {...costForm.getListInputProps("costList", index, "name")}
       />
       <Select
         label="品目"
@@ -124,83 +145,105 @@ export const AddMatterModal = (props: Props) => {
           { value: "営業費", label: "営業費" },
           { value: "その他", label: "その他" },
         ]}
-        {...form.getListInputProps("costList", index, "item")}
+        {...costForm.getListInputProps("costList", index, "item")}
       />
       <Group className="col-span-2">
         <Text>源泉あり</Text>
-        <Switch {...form.getListInputProps("costList", index, "withholding")} />
+        <Switch
+          {...costForm.getListInputProps("costList", index, "withholding")}
+        />
       </Group>
       <DatePicker
         label="支払日/支払い期日"
         placeholder="日付を選択してください。"
         className="col-span-3"
-        {...form.getListInputProps("costList", index, "payment_date")}
+        {...costForm.getListInputProps("costList", index, "payment_date")}
       />
       <TextInput
         label="支払い先"
         className="col-span-5"
-        {...form.getListInputProps("costList", index, "supplier")}
+        {...costForm.getListInputProps("costList", index, "supplier")}
       />
       <Select
         label="受領書"
         className="col-span-3"
         data={["請求書", "領収書"]}
-        {...form.getListInputProps("costList", index, "certificate")}
+        {...costForm.getListInputProps("costList", index, "certificate")}
       />
       <NumberInput
         label="金額（税別）"
         defaultValue={0}
         className="col-span-3"
         min={0}
-        {...form.getListInputProps("costList", index, "amount_of_money")}
+        {...costForm.getListInputProps("costList", index, "amount_of_money")}
       />
       <Textarea
         label="備考"
         className="col-span-12"
-        {...form.getListInputProps("costList", index, "remarks")}
+        {...costForm.getListInputProps("costList", index, "remarks")}
       />
     </Group>
   ));
 
   const handleAddMatter = useCallback(
-    async (uuid: string) => {
-      if (title == "") {
+    async (uuid: string, fixed: boolean) => {
+      if (basicForm.values.title == "") {
         alert("案件名を追加してください。");
         return;
       }
       const { data, error } = await client.from("matter").insert([
         {
           user_id: uuid,
-          title: title,
-          team: team,
-          classification: classification,
-          trello_url: trelloUrl,
-          customer: customer,
-          billing_amount: billingAmount,
-          started_date: startedDate,
-          billing_date: billingDate,
-          payment_due_date: paymentDueDate,
-          comment: comment,
+          title: basicForm.values.title,
+          team: basicForm.values.team,
+          classification: basicForm.values.classification,
+          trello_url: basicForm.values.trelloUrl,
+          customer: basicForm.values.customer,
+          billing_amount: basicForm.values.billing_amount,
+          started_date: basicForm.values.started_date,
+          billing_date: basicForm.values.billing_date,
+          payment_due_date: basicForm.values.payment_due_date,
+          comment: basicForm.values.comment,
           cost_data1:
-            form.values.costList[0] !== null ? form.values.costList[0] : null,
+            costForm.values.costList[0] !== null
+              ? costForm.values.costList[0]
+              : null,
           cost_data2:
-            form.values.costList[1] !== null ? form.values.costList[1] : null,
+            costForm.values.costList[1] !== null
+              ? costForm.values.costList[1]
+              : null,
           cost_data3:
-            form.values.costList[2] !== null ? form.values.costList[2] : null,
+            costForm.values.costList[2] !== null
+              ? costForm.values.costList[2]
+              : null,
           cost_data4:
-            form.values.costList[3] !== null ? form.values.costList[3] : null,
+            costForm.values.costList[3] !== null
+              ? costForm.values.costList[3]
+              : null,
           cost_data5:
-            form.values.costList[4] !== null ? form.values.costList[4] : null,
+            costForm.values.costList[4] !== null
+              ? costForm.values.costList[4]
+              : null,
           cost_data6:
-            form.values.costList[5] !== null ? form.values.costList[5] : null,
+            costForm.values.costList[5] !== null
+              ? costForm.values.costList[5]
+              : null,
           cost_data7:
-            form.values.costList[6] !== null ? form.values.costList[6] : null,
+            costForm.values.costList[6] !== null
+              ? costForm.values.costList[6]
+              : null,
           cost_data8:
-            form.values.costList[7] !== null ? form.values.costList[7] : null,
+            costForm.values.costList[7] !== null
+              ? costForm.values.costList[7]
+              : null,
           cost_data9:
-            form.values.costList[8] !== null ? form.values.costList[8] : null,
+            costForm.values.costList[8] !== null
+              ? costForm.values.costList[8]
+              : null,
           cost_data10:
-            form.values.costList[9] !== null ? form.values.costList[9] : null,
+            costForm.values.costList[9] !== null
+              ? costForm.values.costList[9]
+              : null,
           fixed_flg: fixed,
         },
       ]);
@@ -208,28 +251,14 @@ export const AddMatterModal = (props: Props) => {
         alert("案件の追加に失敗しました。");
       } else {
         if (data) {
-          alert(`新規案件[${title}]を追加しました。`);
+          alert(`新規案件[${basicForm.values.title}]を追加しました。`);
           props.getMatterList();
-          form.values.costList.length = 0;
+          costForm.values.costList.length = 0;
           closeModal();
         }
       }
     },
-    [
-      title,
-      team,
-      classification,
-      trelloUrl,
-      customer,
-      billingAmount,
-      startedDate,
-      billingDate,
-      paymentDueDate,
-      comment,
-      form,
-      closeModal,
-      props,
-    ]
+    [basicForm, costForm, closeModal, props]
   );
 
   return (
@@ -241,12 +270,6 @@ export const AddMatterModal = (props: Props) => {
         title="新規案件の追加"
         overflow="inside"
       >
-        <Checkbox
-          className="flex justify-end"
-          defaultChecked={false}
-          label="確定する"
-          onChange={(e) => setFixed(e.currentTarget.checked)}
-        />
         <section className="m-4">
           <Text color="black" align="left">
             基本情報
@@ -258,30 +281,27 @@ export const AddMatterModal = (props: Props) => {
                 required
                 className="mr-2"
                 style={{ flex: 1 }}
-                onChange={(e) => setTitle(e.currentTarget.value)}
+                {...basicForm.getInputProps("title")}
               />
               <NativeSelect
                 label="チーム"
                 required
                 className="mr-2"
                 data={teamList}
-                onChange={(e) => setTeam(e.currentTarget.value)}
+                {...basicForm.getInputProps("team")}
               />
               <NativeSelect
                 label="分類"
                 required
                 className="mr-2"
                 data={classificationList}
-                onChange={(e) => {
-                  setClassification(e.currentTarget.value);
-                }}
+                {...basicForm.getInputProps("classification")}
               />
               <TextInput
                 label="trelloカードURL"
                 placeholder="https://trello.com/XXXX"
                 required
-                value={trelloUrl}
-                onChange={(e) => setTrelloUrl(e.currentTarget.value)}
+                {...basicForm.getInputProps("trelloUrl")}
               />
             </div>
             <div className="flex mb-4 justify-between w-full">
@@ -289,47 +309,43 @@ export const AddMatterModal = (props: Props) => {
                 label="取引先"
                 placeholder="株式会社○○○○"
                 className="mr-2 w-1/3"
-                onChange={(e) => setCustomer(e.currentTarget.value)}
+                {...basicForm.getInputProps("customer")}
               />
               <NumberInput
                 label="請求額"
                 className="mr-2"
-                defaultValue={1000}
-                onChange={(value) =>
-                  typeof value == "number"
-                    ? setBillingAmount(value)
-                    : setBillingAmount(0)
-                }
+                defaultValue={0}
+                {...basicForm.getInputProps("billing_amount")}
               />
               <DatePicker
                 label="案件開始日"
                 placeholder="2022/1/1"
                 className="mr-2"
-                onChange={setStartedDate}
+                {...basicForm.getInputProps("started_date")}
               />
               <DatePicker
                 label="請求日"
                 placeholder="2022/1/1"
                 className="mr-2"
-                onChange={setBillingDate}
+                {...basicForm.getInputProps("billing_date")}
               />
               <DatePicker
                 label="振込期限"
                 placeholder="2022/1/1"
-                onChange={setPaymentDueDate}
+                {...basicForm.getInputProps("payment_due_date")}
               />
             </div>
             <div className="mb-4 w-full">
               <Textarea
                 label="コメント"
-                onChange={(e) => setComment(e.currentTarget.value)}
+                {...basicForm.getInputProps("comment")}
               />
             </div>
           </div>
 
           <div className="mb-4">
             <Box mx="auto">
-              {fields.length > 0 ? (
+              {costFieldList.length > 0 ? (
                 <Text color="black" align="left">
                   コスト情報
                 </Text>
@@ -339,14 +355,14 @@ export const AddMatterModal = (props: Props) => {
                 </Text>
               )}
 
-              {fields}
+              {costFieldList}
 
               <Group position="right" mt="md">
                 <Button
                   color="gray"
                   compact
                   onClick={() =>
-                    form.addListItem("costList", {
+                    costForm.addListItem("costList", {
                       name: "",
                       item: "",
                       payment_date: new Date(),
@@ -363,18 +379,29 @@ export const AddMatterModal = (props: Props) => {
               </Group>
 
               <Text size="sm" weight={500} mt="md">
-                Form values:
+                basicForm values:
               </Text>
-              <Code block>{JSON.stringify(form.values, null, 2)}</Code>
+              <Code block>{JSON.stringify(basicForm.values, null, 2)}</Code>
+              <Text size="sm" weight={500} mt="md">
+                costForm values:
+              </Text>
+              <Code block>{JSON.stringify(costForm.values, null, 2)}</Code>
             </Box>
           </div>
 
           <div className="flex">
             <Button
               className="mr-4"
-              onClick={() => handleAddMatter(props.uuid)}
+              onClick={() => handleAddMatter(props.uuid, false)}
             >
-              案件追加
+              確定せずに案件追加
+            </Button>
+            <Button
+              className="mr-4"
+              color="red"
+              onClick={() => handleAddMatter(props.uuid, true)}
+            >
+              確定して案件追加
             </Button>
             <Button color="green" onClick={closeModal}>
               キャンセル
