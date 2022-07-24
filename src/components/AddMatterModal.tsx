@@ -78,7 +78,7 @@ export const AddMatterModal = (props: Props) => {
 
   const costFieldList = costForm.values.costList.map((cost, index) => (
     <Group
-      key={cost.name}
+      key={index}
       mt="xs"
       className="grid grid-cols-12 border bg-slate-100 m-2 p-4"
     >
@@ -284,27 +284,32 @@ export const AddMatterModal = (props: Props) => {
 
               {costFieldList}
 
-              <Group position="right" mt="md">
-                <Button
-                  color="gray"
-                  compact
-                  onClick={() =>
-                    costForm.addListItem("costList", {
-                      name: "",
-                      item: "",
-                      payment_date: new Date(),
-                      supplier: "",
-                      withholding: false,
-                      certificate: "",
-                      amount_of_money: 0,
-                      remarks: "",
-                    })
-                  }
-                >
-                  コスト情報追加
-                </Button>
-              </Group>
-
+              {costFieldList.length < 10 ? (
+                <Group position="right" mt="md">
+                  <Button
+                    color="gray"
+                    compact
+                    onClick={() =>
+                      costForm.addListItem("costList", {
+                        name: "",
+                        item: "",
+                        payment_date: new Date(),
+                        supplier: "",
+                        withholding: false,
+                        certificate: "",
+                        amount_of_money: 0,
+                        remarks: "",
+                      })
+                    }
+                  >
+                    コスト情報追加
+                  </Button>
+                </Group>
+              ) : (
+                <div className="text-right text-blue-600">
+                  入力できるコスト情報は10個までです。
+                </div>
+              )}
               <Text size="sm" weight={500} mt="md">
                 basicForm values:
               </Text>
