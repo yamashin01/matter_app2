@@ -35,10 +35,6 @@ type Props = {
 };
 
 export const AddMatterModal = (props: Props) => {
-  const closeModal = useCallback(() => {
-    props.setIsOpened(false);
-  }, []);
-
   const basicForm = useForm<basicObjType>({
     initialValues: {
       title: "",
@@ -76,6 +72,21 @@ export const AddMatterModal = (props: Props) => {
       ]),
     },
   });
+
+  const closeModal = useCallback(() => {
+    costForm.values.costList.length = 0;
+    basicForm.values.title = "";
+    basicForm.values.team = "";
+    basicForm.values.classification = "";
+    basicForm.values.customer = "";
+    basicForm.values.trelloUrl = "";
+    basicForm.values.billing_date = new Date();
+    basicForm.values.started_date = new Date();
+    basicForm.values.payment_due_date = new Date();
+    basicForm.values.comment = "";
+    basicForm.values.billing_amount = 0;
+    props.setIsOpened(false);
+  }, [costForm, basicForm]);
 
   const costFieldList = costForm.values.costList.map((cost, index) => (
     <Group
@@ -163,14 +174,6 @@ export const AddMatterModal = (props: Props) => {
       } else {
         alert(`新規案件[${basicForm.values.title}]を追加しました。`);
         props.getMatterList();
-        costForm.values.costList.length = 0;
-        basicForm.values.title = "";
-        basicForm.values.team = "";
-        basicForm.values.classification = "";
-        basicForm.values.customer = "";
-        basicForm.values.trelloUrl = "";
-        basicForm.values.comment = "";
-        basicForm.values.billing_amount = 0;
         closeModal();
       }
     },
