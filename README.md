@@ -24,7 +24,7 @@ This project is for matter management of organization.
 ```bash
 git init
 git clone https://github.com/yamashin01/matter_app2.git
-cd matter-app
+cd matter-app2
 ```
 
 2. install tailwindcss
@@ -55,7 +55,7 @@ yarn add -D @storybook/addon-postcss@latest
 6. install mantine
 
 ```bash
-yarn add @mantine/hooks @mantine/form @mantine/core @mantine/next
+yarn add @mantine/hooks @mantine/form @mantine/core @mantine/next @mantine/form
 ```
 
 7. install supabase
