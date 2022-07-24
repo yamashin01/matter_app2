@@ -1,16 +1,25 @@
 import {
+  ActionIcon,
+  Box,
   Button,
   Checkbox,
+  Code,
+  Group,
   Modal,
   NativeSelect,
   NumberInput,
-  Table,
+  Select,
+  Switch,
+  Text,
   Textarea,
   TextInput,
+  Title,
 } from "@mantine/core";
 import { DatePicker } from "@mantine/dates";
+import { formList, useForm } from "@mantine/form";
 import React, { useCallback, useState } from "react";
 import { client } from "src/libs/supabase";
+import { Trash } from "tabler-icons-react";
 
 type Props = {
   uuid: string;
@@ -20,19 +29,25 @@ type Props = {
 };
 
 const teamList = ["本部", "事業創出", "広報", "SDGs", "事務局"];
-const classificationList = ["会員費", "受託案件", "認定ファシリ"];
-const costclassList = [
-  "備品購入",
-  "システム料",
-  "施設利用料",
-  "メンバー報酬",
-  "外注費",
-  "シンラボ活動費",
-  "広告宣伝費",
-  "教育・研修費",
-  "営業費",
+const classificationList = [
+  "会員費",
+  "受託案件",
+  "認定ファシリ",
+  "ボードゲーム",
+  "イベント",
   "その他",
 ];
+
+interface costObjType {
+  name: string;
+  item: string;
+  payment_date: Date;
+  supplier: string;
+  withholding: boolean;
+  certificate: string;
+  amount_of_money: number;
+  remarks: string;
+}
 
 export const AddMatterModal = (props: Props) => {
   const [title, setTitle] = useState<string>("");
@@ -45,43 +60,107 @@ export const AddMatterModal = (props: Props) => {
   const [billingDate, setBillingDate] = useState<Date | null>(new Date());
   const [paymentDueDate, setPaymentDueDate] = useState<Date | null>(new Date());
   const [comment, setComment] = useState<string | null>("");
-  const [costName1, setCostName1] = useState<string | null>("");
-  const [costItem1, setCostItem1] = useState<string | null>("");
-  const [costPaymentDate1, setCostPaymentDate1] = useState<Date | null>(
-    new Date()
-  );
-  const [costSupplier1, setCostSupplier1] = useState<string | null>("");
-  const [costWithholding1, setCostWithholding1] = useState<boolean | null>(
-    false
-  );
-  const [costCertificate1, setCostCertificate1] = useState<string | null>("");
-  const [costAmountOfMoney1, setCostAmountOfMoney1] = useState<
-    number | undefined
-  >(0);
-  const [costRemarks1, setCostRemarks1] = useState<string | null>("");
   const [fixed, setFixed] = useState<boolean>(false);
 
   const closeModal = useCallback(() => {
     props.setIsOpened(false);
   }, []);
 
-  const costItemList = [
-    "経費項目",
-    "品目",
-    "支払日",
-    "支払い先",
-    "源泉",
-    "受領書",
-    "金額（税別）",
-    "備考",
-  ];
-  const threads = (
-    <tr>
-      {costItemList.map((threadItem, index) => {
-        return <th key={index}>{threadItem}</th>;
-      })}
-    </tr>
-  );
+  const form = useForm({
+    initialValues: {
+      costList: formList<costObjType>([
+        {
+          name: "",
+          item: "",
+          payment_date: new Date(),
+          supplier: "",
+          withholding: false,
+          certificate: "",
+          amount_of_money: 0,
+          remarks: "",
+        },
+      ]),
+    },
+  });
+
+  const fields = form.values.costList.map((cost, index) => (
+    <Group
+      key={cost.name}
+      mt="xs"
+      className="grid grid-cols-12 border bg-slate-100 m-2 p-4"
+    >
+      <Title className="col-span-11 text-base">コスト{index + 1}</Title>
+      <ActionIcon
+        color="red"
+        className="col-span-1"
+        variant="hover"
+        onClick={() => form.removeListItem("costList", index)}
+      >
+        <Trash size={16} />
+      </ActionIcon>
+      <TextInput
+        label="経費名"
+        placeholder="経費を入力してください。"
+        className="col-span-3"
+        required
+        sx={{ flex: 1 }}
+        {...form.getListInputProps("costList", index, "name")}
+      />
+      <Select
+        label="品目"
+        placeholder="品目を選択してください。"
+        className="col-span-3"
+        required
+        data={[
+          { value: "備品購入", label: "備品購入" },
+          { value: "システム料", label: "システム料" },
+          { value: "施設利用料", label: "施設利用料" },
+          { value: "メンバー報酬", label: "メンバー報酬" },
+          { value: "外注費", label: "外注費" },
+          { value: "広告宣伝費", label: "広告宣伝費" },
+          { value: "シンラボ活動費", label: "シンラボ活動費" },
+          { value: "広告宣伝費", label: "広告宣伝費" },
+          { value: "教育・研修費", label: "教育・研修費" },
+          { value: "営業費", label: "営業費" },
+          { value: "その他", label: "その他" },
+        ]}
+        {...form.getListInputProps("costList", index, "item")}
+      />
+      <Group className="col-span-2">
+        <Text>源泉あり</Text>
+        <Switch {...form.getListInputProps("costList", index, "withholding")} />
+      </Group>
+      <DatePicker
+        label="支払日/支払い期日"
+        placeholder="日付を選択してください。"
+        className="col-span-3"
+        {...form.getListInputProps("costList", index, "payment_date")}
+      />
+      <TextInput
+        label="支払い先"
+        className="col-span-5"
+        {...form.getListInputProps("costList", index, "supplier")}
+      />
+      <Select
+        label="受領書"
+        className="col-span-3"
+        data={["請求書", "領収書"]}
+        {...form.getListInputProps("costList", index, "certificate")}
+      />
+      <NumberInput
+        label="金額（税別）"
+        defaultValue={0}
+        className="col-span-3"
+        min={0}
+        {...form.getListInputProps("costList", index, "amount_of_money")}
+      />
+      <Textarea
+        label="備考"
+        className="col-span-12"
+        {...form.getListInputProps("costList", index, "remarks")}
+      />
+    </Group>
+  ));
 
   const handleAddMatter = useCallback(
     async (uuid: string) => {
@@ -102,14 +181,26 @@ export const AddMatterModal = (props: Props) => {
           billing_date: billingDate,
           payment_due_date: paymentDueDate,
           comment: comment,
-          cost_name1: costName1,
-          cost_item1: costItem1,
-          cost_date_of_payment1: costPaymentDate1,
-          cost_supplier1: costSupplier1,
-          cost_withholding1: costWithholding1,
-          cost_certificate1: costCertificate1,
-          cost_amount_of_money1: costAmountOfMoney1,
-          cost_remarks1: costRemarks1,
+          cost_data1:
+            form.values.costList[0] !== null ? form.values.costList[0] : null,
+          cost_data2:
+            form.values.costList[1] !== null ? form.values.costList[1] : null,
+          cost_data3:
+            form.values.costList[2] !== null ? form.values.costList[2] : null,
+          cost_data4:
+            form.values.costList[3] !== null ? form.values.costList[3] : null,
+          cost_data5:
+            form.values.costList[4] !== null ? form.values.costList[4] : null,
+          cost_data6:
+            form.values.costList[5] !== null ? form.values.costList[5] : null,
+          cost_data7:
+            form.values.costList[6] !== null ? form.values.costList[6] : null,
+          cost_data8:
+            form.values.costList[7] !== null ? form.values.costList[7] : null,
+          cost_data9:
+            form.values.costList[8] !== null ? form.values.costList[8] : null,
+          cost_data10:
+            form.values.costList[9] !== null ? form.values.costList[9] : null,
           fixed_flg: fixed,
         },
       ]);
@@ -119,6 +210,7 @@ export const AddMatterModal = (props: Props) => {
         if (data) {
           alert(`新規案件[${title}]を追加しました。`);
           props.getMatterList();
+          form.values.costList.length = 0;
           closeModal();
         }
       }
@@ -134,14 +226,7 @@ export const AddMatterModal = (props: Props) => {
       billingDate,
       paymentDueDate,
       comment,
-      costName1,
-      costItem1,
-      costPaymentDate1,
-      costSupplier1,
-      costWithholding1,
-      costCertificate1,
-      costAmountOfMoney1,
-      costRemarks1,
+      form,
       closeModal,
       props,
     ]
@@ -163,7 +248,9 @@ export const AddMatterModal = (props: Props) => {
           onChange={(e) => setFixed(e.currentTarget.checked)}
         />
         <section className="m-4">
-          <h2 className="text-xl mb-4">基本情報</h2>
+          <Text color="black" align="left">
+            基本情報
+          </Text>
           <div className="mb-8">
             <div className="flex mb-4 justify-between">
               <TextInput
@@ -239,64 +326,49 @@ export const AddMatterModal = (props: Props) => {
               />
             </div>
           </div>
-          <h2 className="text-xl mb-4">コスト情報</h2>
-          <Table className="mb-4">
-            <thead>{threads}</thead>
-            <tbody>
-              <tr>
-                <td>
-                  <TextInput
-                    onChange={(e) => setCostName1(e.currentTarget.value)}
-                  />
-                </td>
-                <td>
-                  <NativeSelect
-                    data={costclassList}
-                    onChange={(e) => setCostItem1(e.currentTarget.value)}
-                  />
-                </td>
-                <td>
-                  <DatePicker
-                    placeholder="2022/1/1"
-                    onChange={setCostPaymentDate1}
-                  />
-                </td>
-                <td>
-                  <TextInput
-                    onChange={(e) => setCostSupplier1(e.currentTarget.value)}
-                  />
-                </td>
-                <td>
-                  <NativeSelect
-                    data={["あり", "なし"]}
-                    onChange={(e) =>
-                      setCostWithholding1(
-                        e.currentTarget.value == "あり" ? true : false
-                      )
-                    }
-                  />
-                </td>
-                <td>
-                  <NativeSelect
-                    data={["請求書", "領収書"]}
-                    onChange={(e) => setCostCertificate1(e.currentTarget.value)}
-                  />
-                </td>
-                <td>
-                  <NumberInput
-                    defaultValue={0}
-                    onChange={(val) => setCostAmountOfMoney1(val)}
-                    min={0}
-                  />
-                </td>
-                <td>
-                  <Textarea
-                    onChange={(e) => setCostRemarks1(e.currentTarget.value)}
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </Table>
+
+          <div className="mb-4">
+            <Box mx="auto">
+              {fields.length > 0 ? (
+                <Text color="black" align="left">
+                  コスト情報
+                </Text>
+              ) : (
+                <Text color="dimmed" align="center">
+                  コストなし
+                </Text>
+              )}
+
+              {fields}
+
+              <Group position="right" mt="md">
+                <Button
+                  color="gray"
+                  compact
+                  onClick={() =>
+                    form.addListItem("costList", {
+                      name: "",
+                      item: "",
+                      payment_date: new Date(),
+                      supplier: "",
+                      withholding: false,
+                      certificate: "",
+                      amount_of_money: 0,
+                      remarks: "",
+                    })
+                  }
+                >
+                  コスト情報追加
+                </Button>
+              </Group>
+
+              <Text size="sm" weight={500} mt="md">
+                Form values:
+              </Text>
+              <Code block>{JSON.stringify(form.values, null, 2)}</Code>
+            </Box>
+          </div>
+
           <div className="flex">
             <Button
               className="mr-4"
