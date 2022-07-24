@@ -1,6 +1,20 @@
-export const teamList = ["本部", "事業創出", "広報", "SDGs", "事務局"];
+export const teamList = [
+  { value: "本部", label: "本部" },
+  { value: "事業創出", label: "事業創出" },
+  { value: "広報", label: "広報" },
+  { value: "SDGs", label: "SDGs" },
+  { value: "事務局", label: "事務局" },
+];
 
 export const classificationList = [
+  { value: "会員費", label: "会員費" },
+  { value: "受託案件", label: "受託案件" },
+  { value: "認定ファシリ", label: "認定ファシリ" },
+  { value: "ボードゲーム", label: "ボードゲーム" },
+  { value: "イベント", label: "イベント" },
+  { value: "その他", label: "その他" },
+];
+
 export const costItemList = [
   { value: "備品購入", label: "備品購入" },
   { value: "システム料", label: "システム料" },

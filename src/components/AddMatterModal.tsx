@@ -5,7 +5,6 @@ import {
   Code,
   Group,
   Modal,
-  NativeSelect,
   NumberInput,
   Select,
   Switch,
@@ -193,73 +192,70 @@ export const AddMatterModal = (props: Props) => {
           <Text color="black" align="left">
             基本情報
           </Text>
-          <div className="mb-8">
-            <div className="flex mb-4 justify-between">
-              <TextInput
-                label="案件名"
-                required
-                className="mr-2"
-                style={{ flex: 1 }}
-                {...basicForm.getInputProps("title")}
-              />
-              <NativeSelect
-                label="チーム"
-                required
-                className="mr-2"
-                data={teamList}
-                {...basicForm.getInputProps("team")}
-              />
-              <NativeSelect
-                label="分類"
-                required
-                className="mr-2"
-                data={classificationList}
-                {...basicForm.getInputProps("classification")}
-              />
-              <TextInput
-                label="trelloカードURL"
-                placeholder="https://trello.com/XXXX"
-                required
-                {...basicForm.getInputProps("trelloUrl")}
-              />
-            </div>
-            <div className="flex mb-4 justify-between w-full">
-              <TextInput
-                label="取引先"
-                placeholder="株式会社○○○○"
-                className="mr-2 w-1/3"
-                {...basicForm.getInputProps("customer")}
-              />
-              <NumberInput
-                label="請求額"
-                className="mr-2"
-                defaultValue={0}
-                {...basicForm.getInputProps("billing_amount")}
-              />
-              <DatePicker
-                label="案件開始日"
-                placeholder="2022/1/1"
-                className="mr-2"
-                {...basicForm.getInputProps("started_date")}
-              />
-              <DatePicker
-                label="請求日"
-                placeholder="2022/1/1"
-                className="mr-2"
-                {...basicForm.getInputProps("billing_date")}
-              />
-              <DatePicker
-                label="振込期限"
-                placeholder="2022/1/1"
-                {...basicForm.getInputProps("payment_due_date")}
-              />
-            </div>
-            <div className="mb-4 w-full">
-              <Textarea
-                label="コメント"
-                {...basicForm.getInputProps("comment")}
-              />
-            </div>
+          <div className="mb-4 grid grid-cols-12">
+            <TextInput
+              label="案件名"
+              required
+              className="mr-2 mb-2 col-span-4"
+              style={{ flex: 1 }}
+              {...basicForm.getInputProps("title")}
+            />
+            <Select
+              label="チーム"
+              required
+              className="mr-2 mb-2 col-span-2"
+              data={teamList}
+              {...basicForm.getInputProps("team")}
+            />
+            <Select
+              label="分類"
+              required
+              className="mr-2 mb-2 col-span-3"
+              data={classificationList}
+              {...basicForm.getInputProps("classification")}
+            />
+            <TextInput
+              label="trelloカードURL"
+              placeholder="https://trello.com/XXXX"
+              className="mb-2 col-span-3"
+              required
+              {...basicForm.getInputProps("trelloUrl")}
+            />
+            <TextInput
+              label="取引先"
+              placeholder="株式会社○○○○"
+              className="mr-2 mb-2 col-span-4"
+              {...basicForm.getInputProps("customer")}
+            />
+            <NumberInput
+              label="請求額"
+              className="mr-2 mb-2 col-span-2"
+              defaultValue={0}
+              {...basicForm.getInputProps("billing_amount")}
+            />
+            <DatePicker
+              label="案件開始日"
+              placeholder="2022/1/1"
+              className="mr-2 mb-2 col-span-2"
+              {...basicForm.getInputProps("started_date")}
+            />
+            <DatePicker
+              label="請求日"
+              placeholder="2022/1/1"
+              className="mr-2 mb-2 col-span-2"
+              {...basicForm.getInputProps("billing_date")}
+            />
+            <DatePicker
+              label="振込期限"
+              placeholder="2022/1/1"
+              className="mb-2 col-span-2"
+              {...basicForm.getInputProps("payment_due_date")}
+            />
+            <Textarea
+              label="コメント"
+              className="mb-2 col-span-12"
+              {...basicForm.getInputProps("comment")}
+            />
           </div>
 
           <div className="mb-4">
@@ -270,7 +266,7 @@ export const AddMatterModal = (props: Props) => {
                 </Text>
               ) : (
                 <Text color="dimmed" align="center">
-                  コストなし
+                  コスト情報なし
                 </Text>
               )}
 
@@ -330,7 +326,6 @@ export const AddMatterModal = (props: Props) => {
             <Button color="green" onClick={closeModal}>
               キャンセル
             </Button>
-            <div className="w-32 p-2"></div>
             <div className="w-32 p-2"></div>
           </div>
         </section>
