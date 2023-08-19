@@ -91,9 +91,11 @@ export const AddMatterModal = (props: Props) => {
     <Group
       key={index}
       mt="xs"
-      className="grid grid-cols-12 border bg-slate-100 m-2 p-4"
+      className="grid grid-cols-2 md:grid-cols-12 border bg-slate-100 m-2 p-4"
     >
-      <Title className="col-span-11 text-base">コスト{index + 1}</Title>
+      <Title className="col-span-1 md:col-span-11 text-base">
+        コスト{index + 1}
+      </Title>
       <ActionIcon
         color="red"
         className="col-span-1"
@@ -105,7 +107,7 @@ export const AddMatterModal = (props: Props) => {
       <TextInput
         label="経費名"
         placeholder="経費を入力してください。"
-        className="col-span-3"
+        className="col-span-2 md:col-span-3"
         required
         sx={{ flex: 1 }}
         {...costForm.getListInputProps("costList", index, "name")}
@@ -113,7 +115,7 @@ export const AddMatterModal = (props: Props) => {
       <Select
         label="品目"
         placeholder="品目を選択してください。"
-        className="col-span-3"
+        className="col-span-2 md:col-span-3"
         required
         data={costItemList}
         {...costForm.getListInputProps("costList", index, "item")}
@@ -127,30 +129,30 @@ export const AddMatterModal = (props: Props) => {
       <DatePicker
         label="支払日/支払い期日"
         placeholder="日付を選択してください。"
-        className="col-span-3"
+        className="col-span-2 md:col-span-3"
         {...costForm.getListInputProps("costList", index, "payment_date")}
       />
       <TextInput
         label="支払い先"
-        className="col-span-5"
+        className="col-span-2 md:col-span-5"
         {...costForm.getListInputProps("costList", index, "supplier")}
       />
       <Select
         label="受領書"
-        className="col-span-3"
+        className="col-span-2 md:col-span-3"
         data={["請求書", "領収書"]}
         {...costForm.getListInputProps("costList", index, "certificate")}
       />
       <NumberInput
         label="金額（税別）"
         defaultValue={0}
-        className="col-span-3"
+        className="col-span-2 md:col-span-3"
         min={0}
         {...costForm.getListInputProps("costList", index, "amount_of_money")}
       />
       <Textarea
         label="備考"
-        className="col-span-12"
+        className="col-span-2 md:col-span-12"
         {...costForm.getListInputProps("costList", index, "remarks")}
       />
     </Group>
@@ -192,11 +194,11 @@ export const AddMatterModal = (props: Props) => {
           <Text color="black" align="left">
             基本情報
           </Text>
-          <div className="mb-4 grid grid-cols-12">
+          <div className="mb-4 grid grid-cols-2 md:grid-cols-12">
             <TextInput
               label="案件名"
               required
-              className="mr-2 mb-2 col-span-4"
+              className="mr-2 mb-2 col-span-2 md:col-span-4"
               style={{ flex: 1 }}
               {...basicForm.getInputProps("title")}
             />
@@ -210,7 +212,7 @@ export const AddMatterModal = (props: Props) => {
             <Select
               label="分類"
               required
-              className="mr-2 mb-2 col-span-3"
+              className="mr-2 mb-2 col-span-2 md:col-span-3"
               data={classificationList}
               {...basicForm.getInputProps("classification")}
             />
@@ -224,7 +226,7 @@ export const AddMatterModal = (props: Props) => {
             <TextInput
               label="取引先"
               placeholder="株式会社○○○○"
-              className="mr-2 mb-2 col-span-4"
+              className="mr-2 mb-2 col-span-2 md:col-span-4"
               {...basicForm.getInputProps("customer")}
             />
             <NumberInput
@@ -253,7 +255,7 @@ export const AddMatterModal = (props: Props) => {
             />
             <Textarea
               label="コメント"
-              className="mb-2 col-span-12"
+              className="mb-2 col-span-2 md:col-span-12"
               {...basicForm.getInputProps("comment")}
             />
           </div>
