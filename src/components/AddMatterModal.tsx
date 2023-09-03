@@ -311,21 +311,21 @@ export const AddMatterModal = (props: Props) => {
             </Box>
           </div>
 
-          <div className="flex">
+          <div className="md:flex">
             <Button
-              className="mr-4"
+              className="md:mr-4 mb-2 w-full"
               onClick={() => handleAddMatter(props.uuid, false)}
             >
               確定せずに案件追加
             </Button>
             <Button
-              className="mr-4"
+              className="md:mr-4 mb-2 w-full"
               color="red"
               onClick={() => handleAddMatter(props.uuid, true)}
             >
               確定して案件追加
             </Button>
-            <Button color="green" onClick={closeModal}>
+            <Button className="mb-2 w-full" color="green" onClick={closeModal}>
               キャンセル
             </Button>
             <div className="w-32 p-2"></div>
